@@ -211,6 +211,7 @@ const App: React.FC = () => {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
         <div style={{ fontSize: 50, fontWeight: 900 }}>
@@ -239,11 +240,33 @@ const App: React.FC = () => {
             letterSpacing: -0.3,
             color: "#222222",
             wordBreak: "keep-all",
+            textAlign: "center",
           }}
         >
-          <strong style={{ fontSize: 20, fontWeight: 900 }}>
-            게임하는 방법
-          </strong>{" "}
+          {" "}
+          <strong
+            style={{
+              fontSize: 40,
+              fontWeight: 900,
+              color: "#FF3971",
+              letterSpacing: 1,
+            }}
+          >
+            화석찾기
+          </strong>
+          <br />
+          <span
+            style={{
+              fontSize: 18,
+              fontWeight: 900,
+              border: "1px solid #222222",
+              borderRadius: 8,
+              padding: "4px 12px ",
+              marginBottom: 8,
+            }}
+          >
+            게임방법
+          </span>
           <br />
           당신은 공룡을 무척 좋아하는 고고학자에요. 이 곳에는 아주 가치있는{" "}
           <strong>티라노사우르스 화석 {NUMBER_OF_BOMBS}개</strong>가 묻혀
