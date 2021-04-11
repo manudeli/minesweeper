@@ -201,6 +201,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
+      <div className="cursor" />
       <div
         style={{
           display: "flex",
