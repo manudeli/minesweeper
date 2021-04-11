@@ -4,8 +4,8 @@
   background-color: #e7e7e7;
   @include borders(rgb(214, 214, 214), rgb(243, 243, 243), 4px);
   @include buttons();
-  width: 80px;
-  height: 80px;
+  width: 86px;
+  height: 86px;
   display: flex;
   justify-content: center;
   align-items: center;

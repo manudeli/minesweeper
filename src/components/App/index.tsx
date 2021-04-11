@@ -5,7 +5,7 @@ import NumberDisplay from "../NumberDisplay";
 import { generateCells, openMultipleCells } from "../../utils";
 import { Face, Cell, CellState, CellValue } from "../../types";
 import imgFossil from "../../assets/fossil.png";
-import { NUMBER_OF_PINS, NUMBER_OF_BOMBS } from "../../constants";
+import { NUMBER_OF_BOMBS, MAX_ROWS, MAX_COLS } from "../../constants";
 
 import "./App.scss";
 
@@ -14,7 +14,9 @@ const App: React.FC = () => {
   const [face, setFace] = useState<Face>(Face.curious);
   const [time, setTime] = useState<number>(0);
   const [live, setLive] = useState<boolean>(false);
-  const [bombCounter, setBombCounter] = useState<number>(NUMBER_OF_PINS);
+  const [bombCounter, setBombCounter] = useState<number>(NUMBER_OF_BOMBS);
+  const [dead, setDead] = useState<boolean>(false);
+  const [won, setWon] = useState<boolean>(false);
 
   useEffect(() => {
     const handleMousedown = (): void => {
@@ -44,26 +46,90 @@ const App: React.FC = () => {
     }
   }, [live, time]);
 
-  const handleCellClick = (rowParam: number, colParam: number) => (): void => {
-    if (!live) {
-      // TODO: 시작할때 지뢰를 누르지 않도록 하기
-      setLive(true);
+  useEffect(() => {
+    if (dead) {
+      setLive(false);
+      setFace(Face.dead);
+      alert("네 이 녀석!!!, 티라노사우루스 화석을 산산조각 내어 버렸구나!🤣");
     }
-    const currentCell = cells[rowParam][colParam];
+  }, [dead]);
+
+  useEffect(() => {
+    if (won) {
+      setLive(false);
+      setFace(Face.won);
+      alert("정말 대단해요!!!, 티라노사우루스 화석을 모두 발굴하시다니!🥳");
+      setCells(showAllBombs());
+    }
+  }, [won]);
+
+  const handleCellClick = (rowParam: number, colParam: number) => (): void => {
     let newCells = cells.slice();
 
-    // 핀 되어있는 칸 or 열어져있는 칸 누르면 반응 없음
+    // 게임 시작하기
+    if (!live) {
+      //첫 선택한 cell인 지뢰인 경우 지뢰가 아닐때까지 cells 재생성
+      let isABomb = true;
+      while (isABomb) {
+        newCells = generateCells();
+        if (newCells[rowParam][colParam].value !== CellValue.bomb) {
+          isABomb = false;
+          break;
+        }
+      }
+      setLive(true);
+    }
+
+    const currentCell = newCells[rowParam][colParam];
+
     if ([CellState.flagged, CellState.visible].includes(currentCell.state)) {
+      // 핀 되어있는 칸 or 열어져있는 칸 누르면 반응 없음
       return;
     }
 
     if (currentCell.value === CellValue.bomb) {
-      // TODO: 지뢰를 클릭했을 때 컨트롤하기
+      setDead(true);
+      newCells[rowParam][colParam].red = true;
+      newCells = showAllBombs();
+      setCells(newCells);
+      return;
     } else if (currentCell.value === CellValue.none) {
       newCells = openMultipleCells(newCells, rowParam, colParam);
     } else {
       newCells[rowParam][colParam].state = CellState.visible;
     }
+
+    // 이겼는 지 체크하기
+    let safeOpenCellsExist = false;
+    for (let row = 0; row < MAX_ROWS; row++) {
+      for (let col = 0; col < MAX_COLS; col++) {
+        const currentCell = newCells[row][col];
+
+        if (
+          currentCell.value !== CellValue.bomb &&
+          currentCell.state === CellState.open
+        ) {
+          safeOpenCellsExist = true;
+          break;
+        }
+      }
+    }
+    if (!safeOpenCellsExist) {
+      newCells = newCells.map((row) =>
+        row.map((cell) => {
+          if (cell.value === CellValue.bomb) {
+            return {
+              ...cell,
+              state: CellState.flagged,
+            };
+          }
+          return cell;
+        })
+      );
+      setWon(true);
+    }
+
+    setCells(newCells);
   };
 
   const handleCellContext = (rowParam: number, colParam: number) => (
@@ -92,11 +158,12 @@ const App: React.FC = () => {
   };
 
   const handleFaceClick = (): void => {
-    if (live) {
-      setLive(false);
-      setTime(0);
-      setCells(generateCells());
-    }
+    setLive(false);
+    setTime(0);
+    setBombCounter(NUMBER_OF_BOMBS);
+    setCells(generateCells());
+    setDead(false);
+    setWon(false);
   };
 
   const renderCells = (): React.ReactNode => {
@@ -110,8 +177,25 @@ const App: React.FC = () => {
           col={colIndex}
           value={cell.value}
           state={cell.state}
+          red={cell.red}
         />
       ))
+    );
+  };
+
+  const showAllBombs = (): Cell[][] => {
+    const currentCells = cells.slice();
+    return currentCells.map((row) =>
+      row.map((cell) => {
+        if (cell.value === CellValue.bomb) {
+          return {
+            ...cell,
+            state: CellState.visible,
+          };
+        }
+
+        return cell;
+      })
     );
   };
 
@@ -155,23 +239,23 @@ const App: React.FC = () => {
           <strong style={{ fontSize: 20, fontWeight: 900 }}>
             게임하는 방법
           </strong>{" "}
-          <br />이 곳에는 고고학적으로 아주 가치있는{" "}
+          <br />
+          당신은 공룡을 무척 좋아하는 고고학자에요. 이 곳에는 아주 가치있는{" "}
           <strong>티라노사우르스 화석 {NUMBER_OF_BOMBS}개</strong>가 묻혀
-          있어요. <strong>화석이 있는 땅 주변을 모두 파내면 온전한 화석</strong>
-          을 얻을 수 있어요. 그래서 여러분이 잘 발굴할 수 있게 땅 속에는{" "}
-          <strong>주변 화석 수를 잘 표시</strong>해두었어요. <br /> 단,
-          조심하세요!{" "}
+          있어요. <strong>화석이 있는 땅 주변을 모두 파내면</strong> 화석을 얻을
+          수 있어요. <br /> 단, 조심하세요! 화석은 아주 오래된 것이기 때문에{" "}
           <strong>
-            실수로 화석이 있는 땅을 직접 파면 화석이 깨져 버릴 거에요.
+            실수로 화석이 있는 땅을 직접 파내면 화석이 산산 조각 나버릴 거에요.
           </strong>{" "}
-          자, 이제 화석을 모으러 갑시다!
-          <br />
-          <br />
-          ⛏️<small> (좌 클릭): 화석 주변의 땅을 곡괭이로 파세요</small>
+          화석 주변의 땅바닥에는 주변 화석의 숫자가 있기 때문에 쉽게 알 수 있을
+          거에요. 자, 이제 화석을 모으러 갑시다!
+          <br /> <br />
+          ⛏️
+          <small> (좌 클릭): 화석 주변의 땅을 곡괭이로 파내세요.</small>
           <br />
           📍
           <small>
-            (우 클릭): 화석이 있을 것 같은 땅을 핀으로 표시해 기억하세요
+            (우 클릭): 화석이 있을 것 같은 땅을 핀으로 표시해 기억하세요.
           </small>
         </div>
         <div className="Header">
