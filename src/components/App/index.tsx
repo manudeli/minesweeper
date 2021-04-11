@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 
 import Button from "../Button";
 import NumberDisplay from "../NumberDisplay";
-import { generateCells } from "../../utils";
-import { Face, Cell, CellState } from "../../types";
+import { generateCells, openMultipleCells } from "../../utils";
+import { Face, Cell, CellState, CellValue } from "../../types";
 import imgFossil from "../../assets/fossil.png";
 import { NUMBER_OF_PINS, NUMBER_OF_BOMBS } from "../../constants";
 
@@ -46,7 +46,23 @@ const App: React.FC = () => {
 
   const handleCellClick = (rowParam: number, colParam: number) => (): void => {
     if (!live) {
+      // TODO: 시작할때 지뢰를 누르지 않도록 하기
       setLive(true);
+    }
+    const currentCell = cells[rowParam][colParam];
+    let newCells = cells.slice();
+
+    // 핀 되어있는 칸 or 열어져있는 칸 누르면 반응 없음
+    if ([CellState.flagged, CellState.visible].includes(currentCell.state)) {
+      return;
+    }
+
+    if (currentCell.value === CellValue.bomb) {
+      // TODO: 지뢰를 클릭했을 때 컨트롤하기
+    } else if (currentCell.value === CellValue.none) {
+      newCells = openMultipleCells(newCells, rowParam, colParam);
+    } else {
+      newCells[rowParam][colParam].state = CellState.visible;
     }
   };
 
@@ -129,31 +145,33 @@ const App: React.FC = () => {
         </div>
         <div
           style={{
-            width: 380,
+            width: 400,
             lineHeight: 1.7,
             letterSpacing: -0.3,
             color: "#222222",
+            wordBreak: "keep-all",
           }}
         >
           <strong style={{ fontSize: 20, fontWeight: 900 }}>
             게임하는 방법
           </strong>{" "}
-          <br />이 곳에는{" "}
+          <br />이 곳에는 고고학적으로 아주 가치있는{" "}
           <strong>티라노사우르스 화석 {NUMBER_OF_BOMBS}개</strong>가 묻혀
-          있어요.{" "}
+          있어요. <strong>화석이 있는 땅 주변을 모두 파내면 온전한 화석</strong>
+          을 얻을 수 있어요. 그래서 여러분이 잘 발굴할 수 있게 땅 속에는{" "}
+          <strong>주변 화석 수를 잘 표시</strong>해두었어요. <br /> 단,
+          조심하세요!{" "}
           <strong>
-            화석이 묻혀 있는 땅 주변을 모두 곡괭이로 파내면 온전한 화석
-          </strong>
-          을 얻을 수 있어요. 하지만 조심하세요!{" "}
-          <strong>실수로 화석이 있는 땅을 파내면 화석이 깨질 수 있어요.</strong>{" "}
-          그렇지만 너무 걱정마세요. 여러분이 잘 발굴할 수 있게{" "}
-          <strong>땅 속에 땅 주변 화석 수를 잘 표시</strong>해두었어요.
+            실수로 화석이 있는 땅을 직접 파면 화석이 깨져 버릴 거에요.
+          </strong>{" "}
+          자, 이제 화석을 모으러 갑시다!
           <br />
           <br />
-          <small>⛏️ (좌 클릭): 화석 주변의 땅을 곡괭이로 파세요</small>
+          ⛏️<small> (좌 클릭): 화석 주변의 땅을 곡괭이로 파세요</small>
           <br />
+          📍
           <small>
-            📍 (우 클릭): 화석이 있을 것 같은 땅을 핀으로 표시해 기억하세요
+            (우 클릭): 화석이 있을 것 같은 땅을 핀으로 표시해 기억하세요
           </small>
         </div>
         <div className="Header">
