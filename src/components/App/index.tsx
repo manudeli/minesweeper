@@ -18,13 +18,14 @@ const App: React.FC = () => {
   const [dead, setDead] = useState<boolean>(false);
   const [won, setWon] = useState<boolean>(false);
 
+  const handleMousedown = (): void => {
+    setFace(Face.finding);
+  };
+  const handleMouseup = (): void => {
+    setFace(Face.curious);
+  };
+
   useEffect(() => {
-    const handleMousedown = (): void => {
-      setFace(Face.finding);
-    };
-    const handleMouseup = (): void => {
-      setFace(Face.curious);
-    };
     window.addEventListener("mousedown", handleMousedown);
     window.addEventListener("mouseup", handleMouseup);
 
@@ -58,13 +59,17 @@ const App: React.FC = () => {
     if (won) {
       setLive(false);
       setFace(Face.won);
-      alert("정말 대단해요!!!, 티라노사우루스 화석을 모두 발굴하시다니!🥳");
       setCells(showAllBombs());
+      alert("정말 대단해요!!!, 티라노사우루스 화석을 모두 발굴하시다니!🥳");
     }
   }, [won]);
 
   const handleCellClick = (rowParam: number, colParam: number) => (): void => {
     let newCells = cells.slice();
+
+    if (dead) {
+      return;
+    }
 
     // 게임 시작하기
     if (!live) {
@@ -201,7 +206,6 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <div className="cursor" />
       <div
         style={{
           display: "flex",
