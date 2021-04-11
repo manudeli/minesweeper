@@ -1,7 +1,44 @@
-@import "../../styles/index.scss";
+@import "../../styles";
 
 .Button {
-  @include borders(darkgray, lightgray, 8px);
-  width: 30px;
-  height: 30px;
+  background-color: #e7e7e7;
+  @include borders(rgb(214, 214, 214), rgb(243, 243, 243), 4px);
+  @include buttons();
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 24px;
+
+  &.visible {
+    @include borders(rgb(214, 214, 214), rgb(214, 214, 214), 12px);
+    border-width: 2px;
+  }
+
+  &.value-1 {
+    color: blue;
+  }
+  &.value-2 {
+    color: green;
+  }
+  &.value-3 {
+    color: red;
+  }
+  &.value-4 {
+    color: purple;
+  }
+  &.value-5 {
+    color: maroon;
+  }
+  &.value-6 {
+    color: turquoise;
+  }
+  &.value-7 {
+    color: black;
+  }
+  &.value-8 {
+    color: gray;
+  }
 }

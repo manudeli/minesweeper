@@ -1,34 +1,37 @@
 @import "../../styles/index.scss";
 
 .App {
-  background-color: #c2c2c2;
-  padding: 16px;
-  @include borders(darkgray, lightgray, 16px);
+  background-color: #e7e7e7;
+  padding: 32px;
+  @include borders(rgb(214, 214, 214), rgb(243, 243, 243), 32px);
+  display: flex;
 }
 
 .Header {
   padding: 10px 12px;
-  @include borders(lightgray, darkgray, 8px);
+  @include borders(rgb(243, 243, 243), rgb(214, 214, 214), 16px);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .Body {
-  margin-top: 16px;
-  @include borders(lightgray, darkgray, 8px);
+  background-color: rgb(214, 214, 214);
+  margin-top: 32px;
+  @include borders(rgb(243, 243, 243), rgb(214, 214, 214), 16px);
   display: grid;
   grid-template-rows: repeat(9, 1fr);
   grid-template-columns: repeat(9, 1fr);
 }
 
 .Face {
-  font-size: 35px;
-  width: 62px;
-  height: 62px;
-  @include borders(lightgray, darkgray, 8px);
+  font-size: 40px;
+  width: 72px;
+  height: 72px;
+  @include borders(rgb(214, 214, 214), rgb(243, 243, 243), 16px);
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  @include buttons();
 }
