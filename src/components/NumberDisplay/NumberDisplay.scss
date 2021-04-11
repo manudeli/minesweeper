@@ -1,11 +1,12 @@
 @import "../../styles/index.scss";
 
 .NumberDisplay {
+  width: 160px;
   color: rgb(255, 194, 214);
   background-color: rgb(255, 57, 113);
   @include borders(rgb(243, 243, 243), rgb(214, 214, 214), 16px);
   padding: 16px;
-  text-align: center;
+  text-align: left;
   font-size: 36px;
   letter-spacing: -1px;
   font-weight: 700;

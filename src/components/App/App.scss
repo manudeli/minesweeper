@@ -17,7 +17,7 @@
 
 .Body {
   background-color: rgb(214, 214, 214);
-  margin-top: 32px;
+  margin-left: 32px;
   @include borders(rgb(243, 243, 243), rgb(214, 214, 214), 16px);
   display: grid;
   grid-template-rows: repeat(9, 1fr);
