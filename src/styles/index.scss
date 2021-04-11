@@ -1,0 +1,8 @@
+@mixin borders($left-top, $right-bottom, $radius) {
+  border: 4px solid;
+  border-color: $right-bottom $left-top $left-top $right-bottom;
+  border-radius: $radius;
+}
+
+@mixin button {
+}
