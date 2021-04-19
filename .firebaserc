@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "jonghyeon-projects"
+  },
+  "targets": {
+    "jonghyeon-projects": {
+      "hosting": {
+        "minesweeper": [
+          "minesweeper-jonghyeon"
+        ]
+      }
+    }
+  }
+}
